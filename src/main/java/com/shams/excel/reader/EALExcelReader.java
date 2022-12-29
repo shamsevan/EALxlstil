@@ -1,8 +1,9 @@
-package com.navlabs.excel.reader;
-
 /*
- * author: Naveen Khunteta
+ * author: Shams Evan
+ * This EALExcelReader util class can be used to read/write with .xls format only. It won't work with .xlsx extension.
  */
+
+package com.shams.excel.reader;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,7 +12,14 @@ import java.io.IOException;
 import java.util.Calendar;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFCreationHelper;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFHyperlink;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -21,36 +29,29 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFHyperlink;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 /*
- * ################# This NALExcelReader util class can be used to read/write with .xlsx format only. #########
- * ############################### It won't work with .xls extension ################################
+ * ################# This EALExcelReader util class can be used to read/write with .xls format only. #########
+ * ############################### It won't work with .xlsx extension ################################
  */
-public class NALExcelXLSReader {
+public class EALExcelReader {
 
 	public String path;
 	public FileInputStream fis = null;
 	public FileOutputStream fileOut = null;
-	private XSSFWorkbook workbook = null;
-	private XSSFSheet sheet = null;
-	private XSSFRow row = null;
-	private XSSFCell cell = null;
+	private HSSFWorkbook workbook = null;
+	private HSSFSheet sheet = null;
+	private HSSFRow row = null;
+	private HSSFCell cell = null;
 
-	public NALExcelXLSReader(String path) {
+	public EALExcelReader(String path) {
 
 		this.path = path;
 		try {
 
 			fis = new FileInputStream(path);
-			workbook = new XSSFWorkbook(fis);
+			workbook = new HSSFWorkbook(fis);
 			sheet = workbook.getSheetAt(0);
 			fis.close();
 		} catch (Exception e) {
@@ -187,7 +188,7 @@ public class NALExcelXLSReader {
 	public boolean setCellData(String sheetName, String colName, int rowNum, String data) {
 		try {
 			fis = new FileInputStream(path);
-			workbook = new XSSFWorkbook(fis);
+			workbook = new HSSFWorkbook(fis);
 
 			if (rowNum <= 0)
 				return false;
@@ -241,7 +242,7 @@ public class NALExcelXLSReader {
 		// System.out.println("setCellData setCellData******************");
 		try {
 			fis = new FileInputStream(path);
-			workbook = new XSSFWorkbook(fis);
+			workbook = new HSSFWorkbook(fis);
 
 			if (rowNum <= 0)
 				return false;
@@ -272,18 +273,18 @@ public class NALExcelXLSReader {
 				cell = row.createCell(colNum);
 
 			cell.setCellValue(data);
-			XSSFCreationHelper createHelper = workbook.getCreationHelper();
+			HSSFCreationHelper createHelper = workbook.getCreationHelper();
 
 			// cell style for hyperlinks
 			// by default hypelrinks are blue and underlined
 			CellStyle hlink_style = workbook.createCellStyle();
-			XSSFFont hlink_font = workbook.createFont();
+			HSSFFont hlink_font = workbook.createFont();
 			hlink_font.setUnderline(HSSFFont.U_SINGLE);
 			hlink_font.setColor(IndexedColors.BLUE.getIndex());
 			hlink_style.setFont(hlink_font);
 			// hlink_style.setWrapText(true);
 
-			XSSFHyperlink link = createHelper.createHyperlink(HyperlinkType.FILE);
+			HSSFHyperlink link = createHelper.createHyperlink(HyperlinkType.FILE);
 			link.setAddress(url);
 			cell.setHyperlink(link);
 			cell.setCellStyle(hlink_style);
@@ -337,21 +338,17 @@ public class NALExcelXLSReader {
 	}
 
 	// returns true if column is created successfully
-	/**
-	 * 
-	 * @param sheetName
-	 * @param colName
-	 * @return
-	 */
 	public boolean addColumn(String sheetName, String colName) {
+		// System.out.println("**************addColumn*********************");
+
 		try {
 			fis = new FileInputStream(path);
-			workbook = new XSSFWorkbook(fis);
+			workbook = new HSSFWorkbook(fis);
 			int index = workbook.getSheetIndex(sheetName);
 			if (index == -1)
 				return false;
 
-			XSSFCellStyle style = workbook.createCellStyle();
+			HSSFCellStyle style = workbook.createCellStyle();
 			style.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_40_PERCENT.getIndex());
 			style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
@@ -361,6 +358,9 @@ public class NALExcelXLSReader {
 			if (row == null)
 				row = sheet.createRow(0);
 
+			// cell = row.getCell();
+			// if (cell == null)
+			// System.out.println(row.getLastCellNum());
 			if (row.getLastCellNum() == -1)
 				cell = row.createCell(0);
 			else
@@ -383,22 +383,16 @@ public class NALExcelXLSReader {
 	}
 
 	// removes a column and all the contents
-	/**
-	 * 
-	 * @param sheetName
-	 * @param colNum
-	 * @return
-	 */
 	public boolean removeColumn(String sheetName, int colNum) {
 		try {
 			if (!isSheetExist(sheetName))
 				return false;
 			fis = new FileInputStream(path);
-			workbook = new XSSFWorkbook(fis);
+			workbook = new HSSFWorkbook(fis);
 			sheet = workbook.getSheet(sheetName);
-			XSSFCellStyle style = workbook.createCellStyle();
+			HSSFCellStyle style = workbook.createCellStyle();
 			style.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_40_PERCENT.getIndex());
-			//XSSFCreationHelper createHelper = workbook.getCreationHelper();
+			//HSSFCreationHelper createHelper = workbook.getCreationHelper();
 			style.setFillPattern(FillPatternType.NO_FILL);
 
 			for (int i = 0; i < getRowCount(sheetName); i++) {
@@ -423,11 +417,6 @@ public class NALExcelXLSReader {
 	}
 
 	// find whether sheets exists
-	/**
-	 * 
-	 * @param sheetName
-	 * @return
-	 */
 	public boolean isSheetExist(String sheetName) {
 		int index = workbook.getSheetIndex(sheetName);
 		if (index == -1) {
@@ -441,11 +430,6 @@ public class NALExcelXLSReader {
 	}
 
 	// returns number of columns in a sheet
-	/**
-	 * 
-	 * @param sheetName
-	 * @return
-	 */
 	public int getColumnCount(String sheetName) {
 		// check if sheet exists
 		if (!isSheetExist(sheetName))
@@ -461,18 +445,11 @@ public class NALExcelXLSReader {
 
 	}
 
-	/**
-	 * 
-	 * @param sheetName
-	 * @param screenShotColName
-	 * @param testCaseName
-	 * @param index
-	 * @param url
-	 * @param message
-	 * @return
-	 */
+	// String sheetName, String testCaseName,String keyword ,String URL,String
+	// message
 	public boolean addHyperLink(String sheetName, String screenShotColName, String testCaseName, int index, String url,
 			String message) {
+		// System.out.println("ADDING addHyperLink******************");
 
 		url = url.replace('\\', '/');
 		if (!isSheetExist(sheetName))
@@ -482,6 +459,7 @@ public class NALExcelXLSReader {
 
 		for (int i = 2; i <= getRowCount(sheetName); i++) {
 			if (getCellData(sheetName, 0, i).equalsIgnoreCase(testCaseName)) {
+				// System.out.println("**caught "+(i+index));
 				setCellData(sheetName, screenShotColName, i + index, message, url);
 				break;
 			}
@@ -500,7 +478,7 @@ public class NALExcelXLSReader {
 		return -1;
 
 	}
-
+	
 	/**
 	 * Read all rows and columns and return 2D Object array: can be used with testNG dataprovider.
 	 * @param sheetName

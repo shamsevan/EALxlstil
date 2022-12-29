@@ -2,14 +2,14 @@ package com.tests;
 
 import java.util.Arrays;
 
-import com.navlabs.excel.reader.NALExcelXLSReader;
+import com.shams.excel.reader.EALExcelXLSReader;
 
 public class ExcelPOITest {
 
 	public static void main(String[] args) {
 
 		
-		NALExcelXLSReader reader = new NALExcelXLSReader("testdata.xlsx");
+		EALExcelXLSReader reader = new EALExcelXLSReader("testdata.xlsx");
 		int col = reader.getColumnCount("register");
 		System.out.println(col);
 		
