@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.shams.excel.reader</groupId>
+	<groupId>com.naveenautomationlabs.excel.reader</groupId>
 	<artifactId>xls_reader</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
@@ -19,7 +19,11 @@
 		</license>
 	</licenses>
 
-
+	<scm>
+		<connection>scm:git:git://github.com/naveenanimation20/ExcelUtil.git</connection>
+		<developerConnection>scm:git:ssh://github.com/naveenanimation20/ExcelUtil.git</developerConnection>
+		<url>https://github.com/naveenanimation20/ExcelUtil/tree/master</url>
+	</scm>
 
 	<developers>
 		<developer>
